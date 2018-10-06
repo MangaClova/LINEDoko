@@ -1,20 +1,16 @@
 # LINE Doko
-LINE Doko（ライン ドコ）は、大切な家族が今どこにいるか、音声で位置情報を教えてくれるLINE Clovaスキルです。
+LINE Doko（ライン ドコ）は、大切な家族が今どこにいるか、音声で位置情報を教えてくれる LINE Clova スキルです。
 
-# 会話例
-お子様がお家の Clova に「今どこ？」と話しかけると、あらかじめ設定しておいた相手の位置情報が送られます。
+## 機能説明
 
-例)
-👧「パパ今どこ？」
-↓
-🐻「品川グランドセントラルタワーにいるよ」
+詳しい説明は[コチラのページ](https://mangaclova.github.io/LINEDoko/)を参照してください
 
+[https://mangaclova.github.io/LINEDoko/](https://mangaclova.github.io/LINEDoko/)
 
-👧「ママ今どこ？」
-↓
-🐻「新宿駅にいるよ」
+## 技術的な話
 
-# LINE Dokoのメリット
-- スマートスピーカー「LINE Clova」とスマートフォンさえあれば、簡単に設定が可能です
-- 音声操作なので、小さなお子様、またご年配の方でもご利用いただけます
-- 料理中など、スマートフォンを操作できない状態にも便利です
+項目|値
+----|----
+使用言語|C#
+開発環境|Visual Studio 2017
+クラウド|Microsoft Azure Functions, Azure Table Storage
