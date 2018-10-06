@@ -23,6 +23,19 @@ namespace WhereAreYouApp.Messaging
 
         protected override async Task OnMessageAsync(MessageEvent ev)
         {
+            if (ev.Type == WebhookEventType.Follow)
+            {
+                await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
+                        {
+                            new TextMessage("こんにちは！自分のいる場所を Clova に話してもらうことができます。", new QuickReply(
+                                new List<QuickReplyButtonObject>
+                                {
+                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),
+                                })),
+                        });
+                return;
+            }
+
             if (ev.Type == WebhookEventType.Message)
             {
                 if (ev.Message.Type == EventMessageType.Location)
@@ -37,7 +50,15 @@ namespace WhereAreYouApp.Messaging
                         Address = locationMessage.Address,
                     };
                     await LocationLogs.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
-                    await Client.ReplyMessageAsync(ev.ReplyToken, "ありがとう！場所の記録を消したいときは「消す」って話しかけてね。");
+                    await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
+                        {
+                            new TextMessage("ありがとう！場所の記録を消したいときは「消す」って話しかけてね。", new QuickReply(
+                                new List<QuickReplyButtonObject>
+                                {
+                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を更新する")),
+                                    new QuickReplyButtonObject(new MessageTemplateAction("消す", "消す")),
+                                })),
+                        });
                     return;
                 }
 
