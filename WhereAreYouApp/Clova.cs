@@ -46,12 +46,12 @@ namespace WhereAreYouApp
         private static async Task<IActionResult> ExecuteLaunchRequestAsync(CEKRequest request, CloudTable locationLogs, AppConfiguration config)
         {
             var response = new CEKResponse();
-            response.AddText("こんにちは。私は場所を教えるマンだよ。");
+            response.AddText("こんにちは。私の持ち主のいる場所を確認するね。");
 
             var tableResult = await locationLogs.ExecuteAsync(TableOperation.Retrieve<LocationLog>(nameof(LocationLog), request.Session.User.UserId));
             if (tableResult == null || tableResult.HttpStatusCode != 200)
             {
-                response.AddText($"場所がわかりませんでした。聞いてみるね。");
+                response.AddText($"ごめんなさい。場所がわかりませんでした。持ち主にLINEで聞いてみるから、また後で聞いてね。");
                 await AskCurrentLocationAsync(request, config);
                 return new OkObjectResult(response);
             }
@@ -62,7 +62,7 @@ namespace WhereAreYouApp
             {
                 await AskCurrentLocationAsync(request, config);
             }
-            response.AddText($"{locationLog.Name ?? locationLog.Address}にいます。{(isOldLog ? "でも少し前の場所みたいだね。もう一度聞いてみるよ。" : "")}");
+            response.AddText($"{locationLog.Name ?? locationLog.Address}にいます。{(isOldLog ? "でも少し前の場所みたいだね。もう一度聞いてみるから、また後で聞いてね。。" : "")}");
             return new OkObjectResult(response);
         }
 
@@ -71,7 +71,7 @@ namespace WhereAreYouApp
             await LineMessagingClientFactory.GetLineMessagingClient(config.MessagingApi.AccessToken).PushMessageAsync(
                 request.Session.User.UserId, new List<ISendMessage>
                 {
-                            new TextMessage("Clovaから場所が尋ねられたよ。よかったら場所を送ってね。", new QuickReply(
+                            new TextMessage("Clovaから場所が尋ねられたよ。よかったら場所を教えてね。", new QuickReply(
                                 new List<QuickReplyButtonObject>
                                 {
                                     new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),

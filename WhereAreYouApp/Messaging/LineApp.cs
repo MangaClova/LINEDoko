@@ -37,8 +37,32 @@ namespace WhereAreYouApp.Messaging
                         Address = locationMessage.Address,
                     };
                     await LocationLogs.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
-                    await Client.ReplyMessageAsync(ev.ReplyToken, "お子さんにお伝えしておきます。");
+                    await Client.ReplyMessageAsync(ev.ReplyToken, "ありがとう！場所の記録を消したいときは「消す」って話しかけてね。");
                     return;
+                }
+
+                if (ev.Message.Type == EventMessageType.Text)
+                {
+                    var textMessage = (TextEventMessage)ev.Message;
+                    if (textMessage.Text.Trim() == "消す")
+                    {
+                        var targetLog = await LocationLogs.ExecuteAsync(TableOperation.Retrieve<LocationLog>(
+                            nameof(LocationLog), ev.Source.UserId));
+                        if (targetLog.HttpStatusCode == 200)
+                        {
+                            await LocationLogs.ExecuteAsync(TableOperation.Delete((LocationLog)targetLog.Result));
+                        }
+
+                        await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
+                        {
+                            new TextMessage("場所の記録を削除しました。また登録するときは現在地を送るを押してね。", new QuickReply(
+                                new List<QuickReplyButtonObject>
+                                {
+                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),
+                                })),
+                        });
+                        return;
+                    }
                 }
             }
 
