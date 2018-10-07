@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WhereAreYouApp.Models
 {
@@ -19,9 +20,28 @@ namespace WhereAreYouApp.Models
 
         public string Address { get; set; }
 
+        public string Comment { get; set; }
+        public string AudioCommentUrl { get; set; }
+
         public LocationLog()
         {
             PartitionKey = nameof(LocationLog);
+        }
+
+        public static async Task<LocationLog> GetLocationLogByUserIdAsync(CloudTable cloudTable, string userId)
+        {
+            var r = await cloudTable.ExecuteAsync(TableOperation.Retrieve<LocationLog>(nameof(LocationLog), userId));
+            if (r.HttpStatusCode != 200)
+            {
+                return null;
+            }
+
+            return (LocationLog)r.Result;
+        }
+
+        public static async Task InsertOrReplaceAsync(CloudTable cloudTable, LocationLog locationLog)
+        {
+            await cloudTable.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
         }
     }
 }

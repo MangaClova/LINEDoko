@@ -4,8 +4,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using WhereAreYouApp.Messaging.Contexts;
 using WhereAreYouApp.Models;
 
 namespace WhereAreYouApp.Messaging
@@ -13,81 +13,80 @@ namespace WhereAreYouApp.Messaging
     class LineApp : WebhookApplication
     {
         private LineMessagingClient Client { get; }
-        private CloudTable LocationLogs { get; }
+        private CloudTable StateStoreTable { get; }
+        private IBinder Binder { get; }
+        private MessagingChatSettings MessagingChatSettings { get; set; }
+        private MessagingSessionData MessagingSessionData { get; set; }
 
-        public LineApp(LineMessagingClient client, CloudTable locationLogs)
+        public LineApp(LineMessagingClient client, CloudTable stateStoreTable, IBinder binder)
         {
             Client = client;
-            LocationLogs = locationLogs;
+            StateStoreTable = stateStoreTable;
+            Binder = binder;
         }
 
-        protected override async Task OnMessageAsync(MessageEvent ev)
+        protected override Task OnFollowAsync(FollowEvent ev) => ExecuteAsync(ev);
+
+        protected override Task OnMessageAsync(MessageEvent ev) => ExecuteAsync(ev);
+
+        private async Task ExecuteAsync(WebhookEvent ev)
         {
-            if (ev.Type == WebhookEventType.Follow)
+            await RestoreStateAsync(ev.Source.UserId);
+            await ContextFactory.Create(MessagingChatSettings.ChatStatus).ExecuteAsync(
+                new ContextState
+                {
+                    Client = Client,
+                    SessionData = MessagingSessionData,
+                    Settings = MessagingChatSettings,
+                    WebhookEvent = ev,
+                    StateStoreTable = StateStoreTable,
+                    Binder = Binder,
+                });
+            await SaveStateAsync(ev.Source.UserId);
+        }
+
+        private Task SaveStateAsync(string userId)
+        {
+            return Task.WhenAll(
+                StateStoreTable.ExecuteAsync(TableOperation.InsertOrReplace(MessagingChatSettings)),
+                StateStoreTable.ExecuteAsync(TableOperation.InsertOrReplace(MessagingSessionData)));
+        }
+
+        private async Task RestoreStateAsync(string userId)
+        {
+            var r = await Task.WhenAll(
+                StateStoreTable.ExecuteAsync(TableOperation.Retrieve<MessagingChatSettings>(nameof(MessagingChatSettings), userId)),
+                StateStoreTable.ExecuteAsync(TableOperation.Retrieve<MessagingSessionData>(nameof(MessagingSessionData), userId)));
+            if (r[0].HttpStatusCode != 200)
             {
-                await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
-                        {
-                            new TextMessage("こんにちは！自分のいる場所を Clova に話してもらうことができます。", new QuickReply(
-                                new List<QuickReplyButtonObject>
-                                {
-                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),
-                                })),
-                        });
-                return;
+                MessagingChatSettings = new MessagingChatSettings
+                {
+                    RowKey = userId,
+                };
+            }
+            else
+            {
+                MessagingChatSettings = (MessagingChatSettings)r[0].Result;
             }
 
-            if (ev.Type == WebhookEventType.Message)
+            if (r[1].HttpStatusCode != 200)
             {
-                if (ev.Message.Type == EventMessageType.Location)
+                MessagingSessionData = new MessagingSessionData
                 {
-                    var locationMessage = (LocationEventMessage)ev.Message;
-                    var locationLog = new LocationLog
+                    RowKey = userId,
+                };
+            }
+            else
+            {
+                MessagingSessionData = (MessagingSessionData)r[1].Result;
+                if (MessagingSessionData.Timestamp <= DateTimeOffset.UtcNow - TimeSpan.FromMinutes(15))
+                {
+                    MessagingSessionData = new MessagingSessionData
                     {
-                        RowKey = ev.Source.UserId,
-                        Latitude = locationMessage.Latitude,
-                        Longitude = locationMessage.Longitude,
-                        Name = locationMessage.Title,
-                        Address = locationMessage.Address,
+                        RowKey = userId,
                     };
-                    await LocationLogs.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
-                    await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
-                        {
-                            new TextMessage("ありがとう！場所の記録を消したいときは「消す」って話しかけてね。", new QuickReply(
-                                new List<QuickReplyButtonObject>
-                                {
-                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を更新する")),
-                                    new QuickReplyButtonObject(new MessageTemplateAction("消す", "消す")),
-                                })),
-                        });
-                    return;
-                }
-
-                if (ev.Message.Type == EventMessageType.Text)
-                {
-                    var textMessage = (TextEventMessage)ev.Message;
-                    if (textMessage.Text.Trim() == "消す")
-                    {
-                        var targetLog = await LocationLogs.ExecuteAsync(TableOperation.Retrieve<LocationLog>(
-                            nameof(LocationLog), ev.Source.UserId));
-                        if (targetLog.HttpStatusCode == 200)
-                        {
-                            await LocationLogs.ExecuteAsync(TableOperation.Delete((LocationLog)targetLog.Result));
-                        }
-
-                        await Client.ReplyMessageAsync(ev.ReplyToken, new List<ISendMessage>
-                        {
-                            new TextMessage("場所の記録を削除しました。また登録するときは現在地を送るを押してね。", new QuickReply(
-                                new List<QuickReplyButtonObject>
-                                {
-                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),
-                                })),
-                        });
-                        return;
-                    }
                 }
             }
-
-            await Client.ReplyMessageAsync("まだ対応してません。");
         }
     }
 }
