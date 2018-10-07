@@ -23,6 +23,11 @@ steps:
   inputs:
     command: 'build'
 
-- script: dotnet publish --output $(Build.ArtifactStagingDirectory) --configuration $(buildConfiguration) $(mainProject)
+- script: dotnet publish --output $(Build.BinariesDirectory) --configuration $(buildConfiguration) $(mainProject)
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: $(Build.BinariesDirectory)
+    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
 
 - task: PublishBuildArtifacts@1
