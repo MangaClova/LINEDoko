@@ -46,7 +46,7 @@ namespace WhereAreYouApp
             var taskForSettings = MessagingChatSettings.GetSettingsByUserIdAsync(locationLogs, request.Session.User.UserId);
             var taskForLocationLog = LocationLog.GetLocationLogByUserIdAsync(locationLogs, request.Session.User.UserId);
             await Task.WhenAll(taskForSettings, taskForLocationLog);
-            var settings = taskForSettings.Result;
+            var settings = taskForSettings.Result ?? new MessagingChatSettings();
             var locationLog = taskForLocationLog.Result;
 
             if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
