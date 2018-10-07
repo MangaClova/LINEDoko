@@ -10,9 +10,9 @@ trigger:
   branches:
     include:
     - release
-    paths:
-      exclude:
-      - docs/*
+  paths:
+    exclude:
+    - docs/*
 
 variables:
   solution: '**/*.sln'
