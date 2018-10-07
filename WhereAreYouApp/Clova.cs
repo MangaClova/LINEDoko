@@ -28,6 +28,8 @@ namespace WhereAreYouApp
             ExecutionContext context,
             ILogger log)
         {
+            log.LogInformation("Function started!!");
+
             var config = AppConfiguration.GetConfiguration(context);
             var client = new ClovaClient();
             var request = await client.GetRequest(req.Headers["SignatureCEK"], req.Body);
@@ -73,6 +75,7 @@ namespace WhereAreYouApp
             }
             else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
             {
+                response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
                 response.AddUrl(locationLog.AudioCommentUrl);
             }
 
