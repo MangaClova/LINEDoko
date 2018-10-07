@@ -10,12 +10,12 @@ namespace WhereAreYouApp.Messaging.Contexts
 {
     public class ManualInputYourNameContext : ContextBase<MessageEvent>
     {
-        protected override async Task ExecuteImplAsync(MessagingChatSettings settings, MessagingSessionData sessionData, LineMessagingClient client, MessageEvent messageEvent)
+        protected override async Task ExecuteImplAsync(ContextState context, MessageEvent messageEvent)
         {
             var textMessage = (TextEventMessage)messageEvent.Message;
-            settings.YourName = textMessage.Text.Trim();
-            await client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetFinishGreetingMessage(settings.YourName));
-            settings.ChatStatus = ChatStatusType.General;
+            context.Settings.YourName = textMessage.Text.Trim();
+            await context.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetFinishGreetingMessage(context.Settings.YourName));
+            context.Settings.ChatStatus = ChatStatusType.General;
         }
     }
 }

@@ -88,7 +88,7 @@ Clova に話しかけたら以下のように答えます。
 情報の更新は下のリッチメニューからどうぞ。";
             return new List<ISendMessage>
             {
-                new TextMessage(message);
+                new TextMessage(message),
             };
         }
     }
