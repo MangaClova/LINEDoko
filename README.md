@@ -8,7 +8,11 @@
 
 この README では、技術的な話だけを書きます。
 
-## 使用サービス
+# アーキテクチャ図
+
+（そのうち描く）
+
+# 使用サービス
 
 項目|値
 ----|----
@@ -18,7 +22,7 @@
 
 ↓ 以下詳細
 
-### LINE Clova スキルと bot 開発
+## LINE Clova スキルと bot 開発
 
 * *Skill サーバサイド(実行環境)：<a href="https://azure.microsoft.com/ja-jp/services/functions/" title="Azure Functions" target="_blank">Microsoft
     Azure Functions (v2)</a>
@@ -33,7 +37,7 @@
 * LINE Messaging API を C# で使うための SDK：<a href="https://github.com/pierre3/LineMessagingApi" title="LINE Messaging API for C#"
     target="_blank">LINE Messaging API for C#</a>
 
-### Web サイト
+## Web サイト
 
 * 写真素材：<a href="https://www.pakutaso.com/" title="フリー写真素材ぱくたそ" target="_blank">フリー写真素材ぱくたそ</a>
 * Webページホスト：
@@ -43,8 +47,12 @@
 * Twitter とか check box とかの汎用アイコンフォント集：
     <a href="https://fontawesome.com/" title="Font Awesome" target="_blank">Font Awesome</a>
 
-### CI/CD
+## CI/CD
 
 * 自動ビルドと自動デプロイ：<a href="https://azure.microsoft.com/ja-jp/services/devops/" title="Azure DevOps" target="_blank">Azure DevOps</a>
 * チームのタスク管理：<a href="https://github.com/MangaClova/LINEDoko/projects/1" title="GitHub Projects" target="_blank">GitHub
     Projects</a>
+
+# 技術的に大変だったところ
+
+（そのうち書く）
