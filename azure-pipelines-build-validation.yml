@@ -11,7 +11,6 @@ variables:
   projects: '**/*.csproj'
   testProjects: '**/*Tests.csproj'
   buildConfiguration: 'release'
-  mainProject: 'WhereAreYouApp/WhereAreYouApp.csproj'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -19,9 +18,7 @@ steps:
     command: 'restore'
     projects: '$(projects)'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
+- script: dotnet build --configuration $(buildConfiguration)
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -29,12 +26,6 @@ steps:
     projects: '$(testProjects)'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
-- script: dotnet publish --output $(Build.BinariesDirectory) --configuration $(buildConfiguration) $(mainProject)
+- task: PublishBuildArtifacts@1
 
 - task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: $(Build.BinariesDirectory)
-    includeRootFolder: false
-    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-
-- task: PublishBuildArtifacts@1
