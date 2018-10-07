@@ -6,6 +6,14 @@
 pool:
   vmImage: 'VS2017-Win2016'
 
+trigger:
+  branches:
+    include:
+    - release
+  paths:
+    exclude:
+    - docs/*
+
 variables:
   solution: '**/*.sln'
   projects: '**/*.csproj'

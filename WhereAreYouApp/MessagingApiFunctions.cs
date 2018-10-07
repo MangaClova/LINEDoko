@@ -29,7 +29,7 @@ namespace WhereAreYouApp
             IBinder binder,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("Function started!!");
 
             var config = AppConfiguration.GetConfiguration(context);
             var lineEvents = await req.GetWebhookEventsAsync(config.MessagingApi.AppSecret);
