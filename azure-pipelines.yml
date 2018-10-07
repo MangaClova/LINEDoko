@@ -11,7 +11,6 @@ variables:
   projects: '**/*.csproj'
   testProjects: '**/*Tests.csproj'
   buildConfiguration: 'release'
-  buildDirectory: 'WhereAreYouApp/bin/Release/netstandard2.0/publish'
 
 steps:
 - task: DotNetCoreCLI@0
@@ -30,4 +29,3 @@ steps:
 - task: PublishBuildArtifacts@3
 
 - task: ArchiveFiles@4
-    rootFolderOrFile: '$(buildDirectory)'
