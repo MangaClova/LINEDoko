@@ -26,6 +26,4 @@ steps:
   inputs:
     command: 'pack'
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: 'WhereAreYouApp\bin\$(buildConfiguration)\netstandard2.0\publish'
+- task: PublishBuildArtifacts@1
