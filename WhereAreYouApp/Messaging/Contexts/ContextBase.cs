@@ -13,7 +13,7 @@ namespace WhereAreYouApp.Messaging.Contexts
     {
         public Task ExecuteAsync(ContextState contextState)
         {
-            if (contextState.WebhookEvent.GetType().IsAssignableFrom(typeof(TEvent)))
+            if (typeof(TEvent).IsAssignableFrom(contextState.WebhookEvent.GetType()))
             {
                 return ExecuteImplAsync(contextState, (TEvent)contextState.WebhookEvent);
             }
