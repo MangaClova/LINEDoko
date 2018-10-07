@@ -1,22 +1,19 @@
-
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using CEK.CSharp;
+using CEK.CSharp.Models;
+using Line.Messaging;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using CEK.CSharp;
-using System.Linq;
-using WhereAreYouApp.Models;
-using CEK.CSharp.Models;
 using Microsoft.WindowsAzure.Storage.Table;
-using Line.Messaging;
-using WhereAreYouApp.Messaging;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using WhereAreYouApp.Clovas;
+using WhereAreYouApp.Messaging;
+using WhereAreYouApp.Models;
+using WhereAreYouApp.Utils;
 
 namespace WhereAreYouApp
 {
@@ -26,7 +23,7 @@ namespace WhereAreYouApp
 
         [FunctionName("Clova")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, 
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req,
             [Table("LocationLogs")]CloudTable locationLogs,
             ExecutionContext context,
             ILogger log)
@@ -46,36 +43,48 @@ namespace WhereAreYouApp
         private static async Task<IActionResult> ExecuteLaunchRequestAsync(CEKRequest request, CloudTable locationLogs, AppConfiguration config)
         {
             var response = new CEKResponse();
-            response.AddText("こんにちは。私の持ち主のいる場所を確認するね。");
+            var taskForSettings = MessagingChatSettings.GetSettingsByUserIdAsync(locationLogs, request.Session.User.UserId);
+            var taskForLocationLog = LocationLog.GetLocationLogByUserIdAsync(locationLogs, request.Session.User.UserId);
+            await Task.WhenAll(taskForSettings, taskForLocationLog);
+            var settings = taskForSettings.Result;
+            var locationLog = taskForLocationLog.Result;
 
-            var tableResult = await locationLogs.ExecuteAsync(TableOperation.Retrieve<LocationLog>(nameof(LocationLog), request.Session.User.UserId));
-            if (tableResult == null || tableResult.HttpStatusCode != 200)
+            if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
             {
-                response.AddText($"ごめんなさい。場所がわかりませんでした。持ち主にLINEで聞いてみるから、また後で聞いてね。");
-                await AskCurrentLocationAsync(request, config);
+                // 無い時
+                response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
+                await AskCurrentLocationAsync(request, config, settings);
                 return new OkObjectResult(response);
             }
 
-            var locationLog = (LocationLog)tableResult.Result;
-            var isOldLog = locationLog.Timestamp <= DateTimeOffset.UtcNow - TimeSpan.FromHours(2);
-            if (isOldLog)
+            if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.FromHours(6)))
             {
-                await AskCurrentLocationAsync(request, config);
+                // 古いとき
+                response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
+                await AskCurrentLocationAsync(request, config, settings);
+                return new OkObjectResult(response);
             }
-            response.AddText($"{locationLog.Name ?? locationLog.Address}にいます。{(isOldLog ? "でも少し前の場所みたいだね。もう一度聞いてみるから、また後で聞いてね。。" : "")}");
+
+            // 通常
+            response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
+            if (!string.IsNullOrEmpty(locationLog.Comment))
+            {
+                response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
+            }
+            else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
+            {
+                response.AddUrl(locationLog.AudioCommentUrl);
+            }
+
             return new OkObjectResult(response);
         }
 
-        private static async Task AskCurrentLocationAsync(CEKRequest request, AppConfiguration config)
+        private static async Task AskCurrentLocationAsync(CEKRequest request, AppConfiguration config, MessagingChatSettings settings)
         {
             await LineMessagingClientFactory.GetLineMessagingClient(config.MessagingApi.AccessToken).PushMessageAsync(
                 request.Session.User.UserId, new List<ISendMessage>
                 {
-                            new TextMessage("Clovaから場所が尋ねられたよ。よかったら場所を教えてね。", new QuickReply(
-                                new List<QuickReplyButtonObject>
-                                {
-                                    new QuickReplyButtonObject(new LocationTemplateAction("現在地を送る")),
-                                })),
+                    new TextMessage(ClovaMessages.GetAskLocationMessage(settings.YourName)),
                 });
         }
     }

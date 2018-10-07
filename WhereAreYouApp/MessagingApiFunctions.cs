@@ -26,6 +26,7 @@ namespace WhereAreYouApp
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequestMessage req, 
             ExecutionContext context,
             [Table("LocationLogs")] CloudTable locationLogs,
+            IBinder binder,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -33,7 +34,7 @@ namespace WhereAreYouApp
             var config = AppConfiguration.GetConfiguration(context);
             var lineEvents = await req.GetWebhookEventsAsync(config.MessagingApi.AppSecret);
             var client = LineMessagingClientFactory.GetLineMessagingClient(config.MessagingApi.AccessToken);
-            var app = new LineApp(client, locationLogs);
+            var app = new LineApp(client, locationLogs, binder);
             await app.RunAsync(lineEvents);
             return req.CreateResponse();
         }
