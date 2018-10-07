@@ -22,7 +22,7 @@ namespace WhereAreYouApp.Clovas
         }
 
         public static string GetNoLogMessage(string name) => 
-            $"こんにちは。今日はまだ{name}の位置情報の登録がされていないので、今どこにいるか{name}に LINE で聞いてみますね。少ししたらまた聞いてください。";
+            $"こんにちは。今日はまだ、{name}の位置情報の登録がされていないので、今どこにいるか{name}に LINE で聞いてみますね。少ししたらまた聞いてください。";
 
         public static string GetAskLocationMessage(string name) =>
             $@"{name}さんが今どこにいるか気にしています。
@@ -31,6 +31,6 @@ namespace WhereAreYouApp.Clovas
         public static string GetOldLocationMessage(string name, LocationLog locationLog) =>
             $"{name}は、今日{DateTimeOffsetUtils.ToJstDateTimeOffset(locationLog.Timestamp).ToString("HH時")}に{locationLog.Name ?? locationLog.Address}にいました。今どこにいるか、もう一度 LINE で聞いてみますね。少ししたら、また聞いてください。";
 
-        public static string GetVoiceMessagePrefixMessage(string name) => $"また、{name}からメッセージをもらっています。　　"
+        public static string GetVoiceMessagePrefixMessage(string name) => $"また、{name}からメッセージをもらっています。　　";
     }
 }
