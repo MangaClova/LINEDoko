@@ -17,7 +17,11 @@ namespace WhereAreYouApp.Messaging
                 {
                     if (Instance == null)
                     {
+#if SIMULATOR
+                        Instance = new LineMessagingClient(appSecret, "http://localhost:8080");
+#else
                         Instance = new LineMessagingClient(appSecret);
+#endif
                     }
                 }
             }

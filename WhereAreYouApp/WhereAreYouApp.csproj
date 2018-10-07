@@ -2,6 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <Configurations>Debug;Release;Simulator</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Simulator|AnyCPU'">
+    <DefineConstants>TRACE;SIMULATOR</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CEK.CSharp" Version="0.1.7" />
