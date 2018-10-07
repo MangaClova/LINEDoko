@@ -13,19 +13,19 @@ variables:
   buildConfiguration: 'release'
 
 steps:
-- task: DotNetCoreCLI@0
+- task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
     projects: '$(projects)'
 
-- script: dotnet build --configuration $(buildConfiguration)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'test'
-    projects: '$(testProjects)'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    command: 'publish'
 
-- task: PublishBuildArtifacts@3
-
-- task: ArchiveFiles@4
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'WhereAreYouApp\bin\$(buildConfiguration)\netstandard2.0\publish'
