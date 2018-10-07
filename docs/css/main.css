@@ -287,6 +287,14 @@ section.features .feature-item i {
   -webkit-text-fill-color: transparent;
 }
 
+section.motivation {
+  position: relative;
+  padding: 50px 0;
+  background-image: url("../img/icon-light.png");
+  background-position: 75% 50%;
+  background-repeat: no-repeat;
+}
+
 section.cta {
   position: relative;
   padding: 250px 0;
@@ -294,7 +302,6 @@ section.cta {
   background-position: center;
   background-size: cover;
 }
-
 section.cta .cta-content {
   position: relative;
   z-index: 1;
