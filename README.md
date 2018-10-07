@@ -1,9 +1,7 @@
 # LINE Doko
 LINE Doko（ライン ドコ）は、大切な家族が今どこにいるか、音声で位置情報を教えてくれる LINE Clova スキルです。
 
-## 機能説明
-
-詳しい説明は[コチラのページ](https://mangaclova.github.io/LINEDoko/)を参照してください
+機能説明は[コチラのページ](https://mangaclova.github.io/LINEDoko/)を参照してください
 
 [https://mangaclova.github.io/LINEDoko/](https://mangaclova.github.io/LINEDoko/)
 
