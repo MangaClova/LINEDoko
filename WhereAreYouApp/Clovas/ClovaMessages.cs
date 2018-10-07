@@ -22,7 +22,7 @@ namespace WhereAreYouApp.Clovas
         }
 
         public static string GetNoLogMessage(string name) => 
-            $"こんにちは。今日はまだ{name}の位置情報の登録がされていないので、今どこにいるか{name}に LINE で聞いてみますね。少ししたらまた聞いてください。";
+            $"こんにちは。今日はまだ、{name}の位置情報の登録がされていないので、今どこにいるか{name}に LINE で聞いてみますね。少ししたらまた聞いてください。";
 
         public static string GetAskLocationMessage(string name) =>
             $@"{name}さんが今どこにいるか気にしています。
