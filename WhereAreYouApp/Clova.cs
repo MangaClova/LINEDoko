@@ -75,6 +75,7 @@ namespace WhereAreYouApp
             }
             else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
             {
+                response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
                 response.AddUrl(locationLog.AudioCommentUrl);
             }
 
