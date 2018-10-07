@@ -24,7 +24,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'publish'
+    command: 'pack'
 
 - task: ArchiveFiles@2
   inputs:
