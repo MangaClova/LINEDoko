@@ -139,7 +139,7 @@ namespace WhereAreYouApp.Messaging.Contexts
 
                 using (var audio = await contextState.Client.GetContentStreamAsync(ev.Message.Id))
                 {
-                    var blob = await contextState.Binder.BindAsync<CloudBlockBlob>(new BlobAttribute($"files/{ev.Source.UserId}/{ev.Message.Id}{GetFileExtension(audio.ContentHeaders.ContentType.MediaType)}"));
+                    var blob = await contextState.Binder.BindAsync<CloudBlockBlob>(new BlobAttribute($"files/{ev.Source.UserId}/{ev.Message.Id}{GetFileExtension(audio.ContentHeaders.ContentType.MediaType)}", FileAccess.Write));
                     await blob.UploadFromStreamAsync(audio);
                     locationLog.AudioCommentUrl = blob.Uri.ToString();
                 }
