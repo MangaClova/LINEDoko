@@ -26,7 +26,8 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: $(testProjects)
+    projects: '$(testProjects)'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
 - script: dotnet publish --output $(Build.BinariesDirectory) --configuration $(buildConfiguration) $(mainProject)
 
