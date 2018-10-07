@@ -13,7 +13,7 @@ variables:
   buildConfiguration: 'release'
 
 steps:
-- task: DotNetCoreCLI@0
+- task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
     projects: '$(projects)'
@@ -26,6 +26,6 @@ steps:
     projects: '$(testProjects)'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
-- task: PublishBuildArtifacts@3
+- task: PublishBuildArtifacts@1
 
-- task: ArchiveFiles@4
+- task: ArchiveFiles@2
