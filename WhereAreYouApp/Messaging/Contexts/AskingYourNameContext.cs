@@ -17,13 +17,13 @@ namespace WhereAreYouApp.Messaging.Contexts
             var m = (TextEventMessage)messageEvent.Message;
             if (m.Text == "その他")
             {
-                await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetManualInputMessage());
+                await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetManualInputMessage());
                 contextState.Settings.ChatStatus = ChatStatusType.ManualInputYourName;
                 return;
             }
 
             contextState.Settings.YourName = m.Text.Trim();
-            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetFinishGreetingMessage(contextState.Settings.YourName));
+            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetFinishGreetingMessage(contextState.Settings.YourName));
             contextState.Settings.ChatStatus = ChatStatusType.General;
         }
     }

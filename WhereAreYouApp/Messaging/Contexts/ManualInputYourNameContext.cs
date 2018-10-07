@@ -14,7 +14,7 @@ namespace WhereAreYouApp.Messaging.Contexts
         {
             var textMessage = (TextEventMessage)messageEvent.Message;
             context.Settings.YourName = textMessage.Text.Trim();
-            await context.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetFinishGreetingMessage(context.Settings.YourName));
+            await context.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetFinishGreetingMessage(context.Settings.YourName));
             context.Settings.ChatStatus = ChatStatusType.General;
         }
     }

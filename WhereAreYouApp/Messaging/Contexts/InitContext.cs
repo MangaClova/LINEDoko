@@ -12,8 +12,8 @@ namespace WhereAreYouApp.Messaging.Contexts
     {
         protected override async Task ExecuteImplAsync(ContextState contextState, FollowEvent ev)
         {
-            await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineReplyMessages.GetGreetingMessage());
-            contextState.Settings.ChatStatus = ChatStatusType.AskingYourName;
+            await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetGreetingMessage());
+            contextState.Settings.ChatStatus = ChatStatusType.General;
         }
     }
 }

@@ -28,6 +28,25 @@ namespace WhereAreYouApp.Messaging.Contexts
 
         private async Task ExecuteTextMessageAsync(ContextState contextState, MessageEvent messageEvent)
         {
+            var text = ((TextEventMessage)messageEvent.Message).Text;
+            switch (LineMessages.DetectIntent(text))
+            {
+                case IntentType.ChangeName:
+                    await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetAskYourNameMessage());
+                    contextState.Settings.ChatStatus = ChatStatusType.AskingYourName;
+                    break;
+                case IntentType.ShowHistory:
+                    await ShowHistoryAsync(contextState, messageEvent);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unknown intent: {text}");
+            }
+        }
+
+        private Task ShowHistoryAsync(ContextState contextState, MessageEvent messageEvent)
+        {
+            // 履歴機能
+            throw new NotImplementedException();
         }
 
         private async Task ExecuteLocationMessageAsync(ContextState contextState, MessageEvent messageEvent)
@@ -43,7 +62,7 @@ namespace WhereAreYouApp.Messaging.Contexts
             };
 
             await contextState.StateStoreTable.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
-            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
+            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
             SetNextCallMethod(nameof(AskingInputCommentAsync));
         }
 
@@ -58,19 +77,19 @@ namespace WhereAreYouApp.Messaging.Contexts
                 }
 
                 textEventMessage = (TextEventMessage)ev.Message;
-                return LineReplyMessages.IsYesOrNo(textEventMessage.Text);
+                return LineMessages.IsYesOrNo(textEventMessage.Text);
             }
 
-            if (isValidMessage(out var text))
+            if (!isValidMessage(out var text))
             {
-                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineReplyMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
+                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
                 SetNextCallMethod(nameof(AskingInputCommentAsync));
                 return;
             }
 
-            if (LineReplyMessages.IsYes(text.Text))
+            if (LineMessages.IsYes(text.Text))
             {
-                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineReplyMessages.GetInputCommentMessage());
+                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetInputCommentMessage());
                 SetNextCallMethod(nameof(InputCommentAsync));
                 return;
             }
@@ -89,7 +108,7 @@ namespace WhereAreYouApp.Messaging.Contexts
                 return;
             }
 
-            await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineReplyMessages.GetFinishInputMessage(contextState.Settings, locationLog));
+            await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetFinishInputMessage(contextState.Settings, locationLog));
             SetNextCallMethod(nameof(InitializeAsync));
         }
 
@@ -153,7 +172,7 @@ namespace WhereAreYouApp.Messaging.Contexts
 
         private async Task ReplyUnknownMessageAsync(ContextState contextState, MessageEvent messageEvent)
         {
-            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineReplyMessages.GetReplyMessageForUnknownMessageType());
+            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetReplyMessageForUnknownMessageType());
             SetNextCallMethod(nameof(InitializeAsync));
         }
 

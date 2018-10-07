@@ -14,7 +14,7 @@ namespace WhereAreYouApp.Messaging.Contexts
         private string _nextCallMethodName;
         protected override async Task ExecuteImplAsync(ContextState contextState, TEvent ev)
         {
-            if (RestoreState(contextState.SessionData.StatefulContext, out var snapshot))
+            if (!RestoreState(contextState.SessionData.StatefulContext, out var snapshot))
             {
                 await InitializeAsync(contextState, ev);
                 await StoreStateAsync(contextState, ev);
@@ -52,7 +52,8 @@ namespace WhereAreYouApp.Messaging.Contexts
         {
             if (string.IsNullOrEmpty(_nextCallMethodName))
             {
-                throw new InvalidOperationException($"You have to call SetNextCallmethod.");
+                contextState.SessionData.StatefulContext = null;
+                return Task.CompletedTask;
             }
 
             contextState.SessionData.StatefulContext = JsonConvert.SerializeObject(new StatefulContextSnapshot
