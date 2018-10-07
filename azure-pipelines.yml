@@ -23,6 +23,11 @@ steps:
   inputs:
     command: 'build'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: $(testProjects)
+
 - script: dotnet publish --output $(Build.BinariesDirectory) --configuration $(buildConfiguration) $(mainProject)
 
 - task: ArchiveFiles@2
