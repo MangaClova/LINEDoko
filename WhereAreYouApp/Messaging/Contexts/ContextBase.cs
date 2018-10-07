@@ -13,9 +13,9 @@ namespace WhereAreYouApp.Messaging.Contexts
     {
         public Task ExecuteAsync(ContextState contextState)
         {
-            if (contextState.WebhookEvent is TEvent t)
+            if (contextState.WebhookEvent.GetType().IsAssignableFrom(typeof(TEvent)))
             {
-                return ExecuteImplAsync(contextState, contextState.WebhookEvent as TEvent);
+                return ExecuteImplAsync(contextState, (TEvent)contextState.WebhookEvent);
             }
 
             throw new InvalidOperationException($"Expected event type is {typeof(TEvent).FullName}, but {contextState.WebhookEvent.GetType().FullName}");
