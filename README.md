@@ -30,7 +30,7 @@
     title="Azure Storage Account" target="_blank">Microsoft Azure ストレージアカウント</a>
 * LINE bot：<a href="https://developers.line.me/ja/services/messaging-api/" title="LINE Messaging API" target="_blank">LINE
     Messaging API</a>
-* Skill の対話モデル作成：<a href="https://developers.line.me/ja/services/messaging-api/" title="Clova Extensions Kit"
+* Skill の対話モデル作成：<a href="https://clova-developers.line.me/guide/" title="Clova Extensions Kit"
     target="_blank">Clova Extensions Kit</a>
 * Clova Extension Kit を C# で使うための SDK：<a href="https://github.com/kenakamu/clova-cek-sdk-csharp" title="Clova CEK SDK C#"
     target="_blank">Clova CEK SDK C#</a>
