@@ -22,8 +22,6 @@ steps:
   inputs:
     command: 'build'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'pack'
+- script: dotnet publish --output $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
