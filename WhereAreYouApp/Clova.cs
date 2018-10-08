@@ -53,7 +53,7 @@ namespace WhereAreYouApp
 
             if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
             {
-                // ñ≥Ç¢éû
+                // „Éá„Éº„Çø„ÅåÁÑ°„ÅÑ
                 response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
                 await AskCurrentLocationAsync(request, config, settings);
                 return new OkObjectResult(response);
@@ -61,13 +61,13 @@ namespace WhereAreYouApp
 
             if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
             {
-                // å√Ç¢Ç∆Ç´
+                // Âè§„ÅÑ„Éá„Éº„Çø
                 response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
                 await AskCurrentLocationAsync(request, config, settings);
                 return new OkObjectResult(response);
             }
 
-            // í èÌ
+            // „Éá„Éº„Çø„Åå„ÅÇ„Çã
             response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
             if (!string.IsNullOrEmpty(locationLog.Comment))
             {
