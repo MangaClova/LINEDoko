@@ -19,8 +19,6 @@ namespace WhereAreYouApp
 {
     public static class ClovaFunctions
     {
-        private static string WhereAreYouIntent { get; } = "WhereAreYou";
-
         [FunctionName("Clova")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req,
