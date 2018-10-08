@@ -29,20 +29,23 @@ namespace WhereAreYouApp.Messaging
 
         public static IList<ISendMessage> GetGreetingMessage() => new List<ISendMessage>
         {
-            new TextMessage(@"友達追加ありがとうございます。 
+            new TextMessage(@"友達追加ありがとうございます😊 
 
-私は、大切な家族の帰りを待つ方向けの Clova スキル「イマドコ」です。 
+私は、大切な家族の帰りを待つ方向けの Clova スキル「イマドコ」です 💁 
 
 あなたの帰りを待つご家族が、おうちの Clova に 
-「ねぇ Clova、イマドコにつないで」 
-と話しかけたら、ここで登録しておいた位置情報を送れます。 
+👧「ねぇ Clova、イマドコにつないで」 
+と話しかけたら、
+
+ここで登録しておいた位置情報🗺(「品川駅」など)を送れます。 
 その際、メッセージも一緒に送ることができます。"),
         };
 
         public static IList<ISendMessage> GetAskYourNameMessage() => new List<ISendMessage>
         {
-            new TextMessage(@"あなたの呼ばれかたを教えてください。 
-おうちの  Clova が「パパは今新宿にいます」などと話すのに使います。"),
+            new TextMessage(@"あなたの呼ばれかたを教えてください 💁
+
+(おうちの Clova が🔊「パパは今新宿にいます」などと話すのに使います)"),
             new TemplateMessage(
             "呼ばれ方",
             new ButtonsTemplate("呼ばれ方",
@@ -62,7 +65,8 @@ namespace WhereAreYouApp.Messaging
         public static string GetFinishGreetingMessage(string yourName) => $@"「{yourName}」に設定しました。
 
 それでは、早速、今どちらにいるか教えてください。
-位置情報の送信は下のリッチメニューからどうぞ";
+
+位置情報の送信は下↓のリッチメニューからどうぞ";
 
         public static string GetReplyMessageForUnknownMessageType() => $@"すいません。わかりませんでした。";
 
@@ -91,12 +95,15 @@ namespace WhereAreYouApp.Messaging
                     return $@"「{settings.YourName}は今{ (string.IsNullOrEmpty(locationLog.Name) ? locationLog.Address : locationLog.Name)}にいます。」";
                 }
 
-                return $@"「{settings.YourName}は今{ (string.IsNullOrEmpty(locationLog.Name) ? locationLog.Address : locationLog.Name)}にいます。また、{settings.YourName}からメッセージをもらっています。「{(string.IsNullOrEmpty(locationLog.Comment) ? "送った音声メッセージが流れます。" : locationLog.Comment)}」";
+                return $@"🔊「{settings.YourName}は今{ (string.IsNullOrEmpty(locationLog.Name) ? locationLog.Address : locationLog.Name)}にいます。
+また、{settings.YourName}からメッセージをもらっています。『{(string.IsNullOrEmpty(locationLog.Comment) ? "(送った音声メッセージが流れます)" : locationLog.Comment)}』」";
             }
             var message = $@"登録が完了しました。
 Clova に話しかけたら以下のように答えます。
+
 {createBodyMessage()}
-情報の更新は下のリッチメニューからどうぞ。";
+
+情報の更新は下のリッチメニューからどうぞ 💁";
             return new List<ISendMessage>
             {
                 new TextMessage(message),
