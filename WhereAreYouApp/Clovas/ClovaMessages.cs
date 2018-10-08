@@ -25,7 +25,7 @@ namespace WhereAreYouApp.Clovas
             $"こんにちは。きょうは、まだ、{name}の位置情報の登録が、されていないので、今どこにいるか、{name}に LINE で聞いてみますね。少ししたら、また、聞いてください。";
 
         public static string GetAskLocationMessage(string name) =>
-            $@"{name}さんが、あなたが今どこにいるのか気にしています。
+            $@"おうちの Clova から通知がありました。あなたが今どこにいるのか気にしています。
 
 位置情報の送信は下↓のリッチメニューからどうぞ 💁";
 
