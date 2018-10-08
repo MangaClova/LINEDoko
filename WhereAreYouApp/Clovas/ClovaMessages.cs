@@ -9,7 +9,7 @@ namespace WhereAreYouApp.Clovas
     public static class ClovaMessages
     {
         public static string GetLocationMessage(string name, LocationLog locationLog) => 
-            $"こんにちは。{name}は今{locationLog.Name ?? locationLog.Address}にいます。";
+            $"こんにちは。{name}は、今、{locationLog.Name ?? locationLog.Address}にいます。";
 
         public static string GetCommentMessage(string name, LocationLog locationLog)
         {
@@ -18,19 +18,20 @@ namespace WhereAreYouApp.Clovas
                 return "";
             }
 
-            return $"また、{name}からメッセージをもらっています。　　{locationLog.Comment}";
+            return $"また、{name}から、メッセージをもらっています。　　{locationLog.Comment}";
         }
 
         public static string GetNoLogMessage(string name) => 
-            $"こんにちは。今日はまだ、{name}の位置情報の登録がされていないので、今どこにいるか{name}に LINE で聞いてみますね。少ししたらまた聞いてください。";
+            $"こんにちは。今日は、まだ、{name}の位置情報の登録が、されていないので、今どこにいるか、{name}に LINE で聞いてみますね。少ししたら、また、聞いてください。";
 
         public static string GetAskLocationMessage(string name) =>
-            $@"{name}さんが今どこにいるか気にしています。
-位置情報の送信は下のリッチメニューからどうぞ";
+            $@"{name}さんが、あなたが今どこにいるのか気にしています。
+
+位置情報の送信は下↓のリッチメニューからどうぞ 💁";
 
         public static string GetOldLocationMessage(string name, LocationLog locationLog) =>
-            $"{name}は、今日{DateTimeOffsetUtils.ToJstDateTimeOffset(locationLog.Timestamp).ToString("HH時")}に{locationLog.Name ?? locationLog.Address}にいました。今どこにいるか、もう一度 LINE で聞いてみますね。少ししたら、また聞いてください。";
+            $"{name}は、今日、{DateTimeOffsetUtils.ToJstDateTimeOffset(locationLog.Timestamp).ToString("HH時")}に、{locationLog.Name ?? locationLog.Address}にいました。今どこにいるか、もう一度 LINE で聞いてみますね。少ししたら、また、聞いてください。";
 
-        public static string GetVoiceMessagePrefixMessage(string name) => $"また、{name}からメッセージをもらっています。　　";
+        public static string GetVoiceMessagePrefixMessage(string name) => $"また、{name}からメッセージを貰っています。　　";
     }
 }
