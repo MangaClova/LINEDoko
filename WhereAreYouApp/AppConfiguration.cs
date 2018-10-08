@@ -34,6 +34,7 @@ namespace WhereAreYouApp
         }
 
         public MessagingApi MessagingApi { get; set; }
+        public Clova Cek{ get; set; }
     }
 
     public class MessagingApi
@@ -44,6 +45,11 @@ namespace WhereAreYouApp
 
     public class Clova
     {
+        public static string IsBeforeThresholdDefaultValue { get; } = "05:00";
         public string ExtensionId { get; set; }
+        /// <summary>
+        /// Format: HH:mm
+        /// </summary>
+        public string IsBeforeThreshold { get; set; }
     }
 }
