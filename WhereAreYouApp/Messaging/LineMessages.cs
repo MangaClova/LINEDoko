@@ -11,6 +11,10 @@ namespace WhereAreYouApp.Messaging
         public static string Yes { get; } = "はい";
         public static string No { get; } = "いいえ";
 
+        public static string AskCommentMessage { get; } = @"メッセージも添えますか？
+(例「多分5時に帰るよ」)
+(ボイスメッセージにも対応しています)";
+
         public static string[] YesNo { get; } = new[] { Yes, No };
 
         public static bool IsYesOrNo(string text) => YesNo.Any(x => x == text);
@@ -45,7 +49,9 @@ namespace WhereAreYouApp.Messaging
         {
             new TextMessage(@"あなたの呼ばれかたを教えてください 💁
 
-(おうちの Clova が🔊「パパは今新宿にいます」などと話すのに使います)"),
+(おうちの Clova が
+ 🔊「パパは今新宿にいます」
+ などと話すのに使います)"),
             new TemplateMessage(
             "呼ばれ方",
             new ButtonsTemplate("呼ばれ方",
@@ -59,12 +65,13 @@ namespace WhereAreYouApp.Messaging
 
         public static IList<ISendMessage> GetManualInputMessage() => new List<ISendMessage>
         {
-            new TextMessage("あなたの呼ばれ方を入力してください。"),
+            new TextMessage(@"あなたの呼ばれ方を入力してください。
+(画面左下のキーボードアイコンからどうぞ)"),
         };
 
-        public static string GetFinishGreetingMessage(string yourName) => $@"「{yourName}」に設定しました。
+        public static string GetFinishGreetingMessage(string yourName) => $@"「{yourName}」に設定しました 💁
 
-それでは、早速、今どちらにいるか教えてください。
+それでは、早速、今どちらにいるか教えてください 🗺📍
 
 位置情報の送信は下↓のリッチメニューからどうぞ";
 
@@ -83,7 +90,8 @@ namespace WhereAreYouApp.Messaging
 
         public static IList<ISendMessage> GetInputCommentMessage() => new List<ISendMessage>
         {
-            new TextMessage("メッセージを入力してください。"),
+            new TextMessage(@"メッセージを入力してください 💁
+(画面左下のキーボードアイコンからどうぞ)"),
         };
 
         public static IList<ISendMessage> GetFinishInputMessage(MessagingChatSettings settings, LocationLog locationLog)

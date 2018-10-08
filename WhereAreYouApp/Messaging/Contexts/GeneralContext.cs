@@ -62,7 +62,7 @@ namespace WhereAreYouApp.Messaging.Contexts
             };
 
             await contextState.StateStoreTable.ExecuteAsync(TableOperation.InsertOrReplace(locationLog));
-            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
+            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetConfirmMessage(LineMessages.AskCommentMessage));
             SetNextCallMethod(nameof(AskingInputCommentAsync));
         }
 
@@ -82,7 +82,7 @@ namespace WhereAreYouApp.Messaging.Contexts
 
             if (!isValidMessage(out var text))
             {
-                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetConfirmMessage("メッセージも添えますか？（例「多分5時に帰るよ」）音声メッセージにも対応しています。"));
+                await contextState.Client.ReplyMessageAsync(ev.ReplyToken, LineMessages.GetConfirmMessage(LineMessages.AskCommentMessage));
                 SetNextCallMethod(nameof(AskingInputCommentAsync));
                 return;
             }
