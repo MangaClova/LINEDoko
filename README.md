@@ -53,6 +53,11 @@
 * チームのタスク管理：<a href="https://github.com/MangaClova/LINEDoko/projects/1" title="GitHub Projects" target="_blank">GitHub
     Projects</a>
 
+# DevOps
+CI/CD の環境を整えました。
+
+（Azure DevOps のスクショ貼る）
+
 # 技術的に大変だったところ
 
 （そのうち書く）
