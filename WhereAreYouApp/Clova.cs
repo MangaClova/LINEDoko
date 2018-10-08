@@ -59,7 +59,7 @@ namespace WhereAreYouApp
                 return new OkObjectResult(response);
             }
 
-            if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.FromHours(6)))
+            if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
             {
                 // ŒÃ‚¢‚Æ‚«
                 response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
