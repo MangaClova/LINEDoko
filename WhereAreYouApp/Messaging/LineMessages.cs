@@ -1,7 +1,9 @@
 ﻿using Line.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WhereAreYouApp.Models;
+using WhereAreYouApp.Utils;
 
 namespace WhereAreYouApp.Messaging
 {
@@ -29,6 +31,26 @@ namespace WhereAreYouApp.Messaging
                 case "呼び出し履歴": return IntentType.ShowHistory;
                 default: return IntentType.None;
             }
+        }
+
+        public static IList<ISendMessage> GetHistoriesMessage(IEnumerable<DateTimeOffset> histories)
+        {
+            if (!histories.Any())
+            {
+                return new List<ISendMessage>
+                {
+                    new TextMessage("Clova からの確認履歴はありません。"),
+                };
+            }
+
+            var historiesTexts = histories.Select(x => DateTimeOffsetUtils.ToJstDateTimeOffset(x))
+                .Select(x => $"- {x.ToString("yyyy年MM月dd日 HH時mm分")}")
+                .Reverse();
+            return new List<ISendMessage>
+            {
+                new TextMessage($@"以下の時間に Clova から確認がありました。
+{string.Join(Environment.NewLine, historiesTexts)}"),
+            };
         }
 
         public static IList<ISendMessage> GetGreetingMessage() => new List<ISendMessage>

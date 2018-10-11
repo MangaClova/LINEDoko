@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace WhereAreYouApp
             await Task.WhenAll(taskForSettings, taskForLocationLog);
             var settings = taskForSettings.Result ?? new MessagingChatSettings();
             var locationLog = taskForLocationLog.Result;
-
+            AddHistory(settings);
             if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
             {
                 // データが無い
@@ -78,6 +79,16 @@ namespace WhereAreYouApp
             }
 
             return new OkObjectResult(response);
+        }
+
+        private static void AddHistory(MessagingChatSettings settings)
+        {
+            var histories = JsonConvert.DeserializeObject<List<DateTimeOffset>>(settings.HistoryJson ?? "[]");
+            histories.Add(DateTimeOffset.UtcNow);
+            while (histories.Count > 10)
+            {
+                histories.RemoveAt(0);
+            }
         }
 
         private static async Task AskCurrentLocationAsync(CEKRequest request, AppConfiguration config, MessagingChatSettings settings)
