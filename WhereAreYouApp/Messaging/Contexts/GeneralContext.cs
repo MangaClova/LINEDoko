@@ -9,6 +9,7 @@ using Line.Messaging.Webhooks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using WhereAreYouApp.Models;
 
 namespace WhereAreYouApp.Messaging.Contexts
@@ -43,10 +44,10 @@ namespace WhereAreYouApp.Messaging.Contexts
             }
         }
 
-        private Task ShowHistoryAsync(ContextState contextState, MessageEvent messageEvent)
+        private async Task ShowHistoryAsync(ContextState contextState, MessageEvent messageEvent)
         {
-            // 履歴機能
-            throw new NotImplementedException();
+            var histories = JsonConvert.DeserializeObject<List<DateTimeOffset>>(contextState.Settings.HistoryJson ?? "[]");
+            await contextState.Client.ReplyMessageAsync(messageEvent.ReplyToken, LineMessages.GetHistoriesMessage(histories));
         }
 
         private async Task ExecuteLocationMessageAsync(ContextState contextState, MessageEvent messageEvent)
