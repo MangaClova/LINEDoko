@@ -82,7 +82,7 @@ namespace WhereAreYouApp
             }
             finally
             {
-                await LocationLog.InsertOrReplaceAsync(locationLogs, locationLog);
+                await locationLogs.ExecuteAsync(TableOperation.InsertOrReplace(settings));
             }
 
             return new OkObjectResult(response);
