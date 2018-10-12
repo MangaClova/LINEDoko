@@ -89,6 +89,7 @@ namespace WhereAreYouApp
             {
                 histories.RemoveAt(0);
             }
+            settings.HistoryJson = JsonConvert.SerializeObject(histories);
         }
 
         private static async Task AskCurrentLocationAsync(CEKRequest request, AppConfiguration config, MessagingChatSettings settings)
