@@ -49,33 +49,40 @@ namespace WhereAreYouApp
             await Task.WhenAll(taskForSettings, taskForLocationLog);
             var settings = taskForSettings.Result ?? new MessagingChatSettings();
             var locationLog = taskForLocationLog.Result;
-            AddHistory(settings);
-            if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
+            try
             {
-                // データが無い
-                response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
-                await AskCurrentLocationAsync(request, config, settings);
-                return new OkObjectResult(response);
-            }
+                AddHistory(settings);
+                if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
+                {
+                    // データが無い
+                    response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
+                    await AskCurrentLocationAsync(request, config, settings);
+                    return new OkObjectResult(response);
+                }
 
-            if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
-            {
-                // 古いデータ
-                response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
-                await AskCurrentLocationAsync(request, config, settings);
-                return new OkObjectResult(response);
-            }
+                if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
+                {
+                    // 古いデータ
+                    response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
+                    await AskCurrentLocationAsync(request, config, settings);
+                    return new OkObjectResult(response);
+                }
 
-            // データがある
-            response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
-            if (!string.IsNullOrEmpty(locationLog.Comment))
-            {
-                response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
+                // データがある
+                response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
+                if (!string.IsNullOrEmpty(locationLog.Comment))
+                {
+                    response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
+                }
+                else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
+                {
+                    response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
+                    response.AddUrl(locationLog.AudioCommentUrl);
+                }
             }
-            else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
+            finally
             {
-                response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
-                response.AddUrl(locationLog.AudioCommentUrl);
+                await LocationLog.InsertOrReplaceAsync(locationLogs, locationLog);
             }
 
             return new OkObjectResult(response);
@@ -89,6 +96,7 @@ namespace WhereAreYouApp
             {
                 histories.RemoveAt(0);
             }
+            settings.HistoryJson = JsonConvert.SerializeObject(histories);
         }
 
         private static async Task AskCurrentLocationAsync(CEKRequest request, AppConfiguration config, MessagingChatSettings settings)
