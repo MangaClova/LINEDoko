@@ -47,7 +47,7 @@ namespace WhereAreYouApp
             var taskForSettings = MessagingChatSettings.GetSettingsByUserIdAsync(locationLogs, request.Session.User.UserId);
             var taskForLocationLog = LocationLog.GetLocationLogByUserIdAsync(locationLogs, request.Session.User.UserId);
             await Task.WhenAll(taskForSettings, taskForLocationLog);
-            var settings = taskForSettings.Result ?? new MessagingChatSettings();
+            var settings = taskForSettings.Result ?? new MessagingChatSettings { RowKey = request.Session.User.UserId };
             var locationLog = taskForLocationLog.Result;
             try
             {
