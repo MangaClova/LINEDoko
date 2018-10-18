@@ -57,52 +57,35 @@ namespace WhereAreYouApp
                     return new OkObjectResult(response);
                 }
 
-                if (request.Request.Type == RequestType.LaunchRequest || (request.Request.Type == RequestType.IntentRequest && request.Request.Intent.Name == "Clova.GuideIntent"))
+                AddHistory(settings);
+                response.AddText(ClovaMessages.GetGuideMessage(settings.YourName));
+                if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
                 {
-                    response.AddText(ClovaMessages.GetGreetMessage());
-                    response.AddText(ClovaMessages.GetGuideMessage(settings.YourName));
-                    response.ShouldEndSession = false;
+                    // データが無い
+                    response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
+                    await AskCurrentLocationAsync(request, config, settings);
                     return new OkObjectResult(response);
                 }
 
-                if (request.Request.Type == RequestType.IntentRequest && request.Request.Intent.Name == "WhereIntent")
+                if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
                 {
-                    AddHistory(settings);
-                    if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
-                    {
-                        // データが無い
-                        response.AddText(ClovaMessages.GetNoLogMessage(settings.YourName));
-                        await AskCurrentLocationAsync(request, config, settings);
-                        return new OkObjectResult(response);
-                    }
-
-                    if (DateTimeOffsetUtils.IsBefore(locationLog.Timestamp, TimeSpan.Parse(config.Cek.IsBeforeThreshold ?? Clova.IsBeforeThresholdDefaultValue)))
-                    {
-                        // 古いデータ
-                        response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
-                        await AskCurrentLocationAsync(request, config, settings);
-                        return new OkObjectResult(response);
-                    }
-
-                    // データがある
-                    response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
-                    if (!string.IsNullOrEmpty(locationLog.Comment))
-                    {
-                        response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
-                        return new OkObjectResult(response);
-                    }
-                    else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
-                    {
-                        response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
-                        response.AddUrl(locationLog.AudioCommentUrl);
-                        return new OkObjectResult(response);
-                    }
+                    // 古いデータ
+                    response.AddText(ClovaMessages.GetOldLocationMessage(settings.YourName, locationLog));
+                    await AskCurrentLocationAsync(request, config, settings);
+                    return new OkObjectResult(response);
                 }
-                else
+
+                // データがある
+                response.AddText(ClovaMessages.GetLocationMessage(settings.YourName, locationLog));
+                if (!string.IsNullOrEmpty(locationLog.Comment))
                 {
-                    response.AddText(ClovaMessages.GetSorryMessage());
-                    response.AddText(ClovaMessages.GetGuideMessage(settings.YourName));
-                    response.ShouldEndSession = false;
+                    response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
+                    return new OkObjectResult(response);
+                }
+                else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
+                {
+                    response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
+                    response.AddUrl(locationLog.AudioCommentUrl);
                     return new OkObjectResult(response);
                 }
             }
