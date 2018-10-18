@@ -32,6 +32,16 @@ namespace WhereAreYouApp.Messaging
         private async Task ExecuteAsync(WebhookEvent ev)
         {
             await RestoreStateAsync(ev.Source.UserId);
+            if (ev.Type == WebhookEventType.Follow)
+            {
+                MessagingChatSettings.IsLineFrend = true;
+            }
+
+            if (ev.Type == WebhookEventType.Unfollow)
+            {
+                MessagingChatSettings.IsLineFrend = false;
+            }
+
             await ContextFactory.Create(MessagingChatSettings.ChatStatus).ExecuteAsync(
                 new ContextState
                 {
