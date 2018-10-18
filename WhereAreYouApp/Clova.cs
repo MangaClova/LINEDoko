@@ -80,21 +80,19 @@ namespace WhereAreYouApp
                 if (!string.IsNullOrEmpty(locationLog.Comment))
                 {
                     response.AddText(ClovaMessages.GetCommentMessage(settings.YourName, locationLog));
-                    return new OkObjectResult(response);
                 }
                 else if (!string.IsNullOrEmpty(locationLog.AudioCommentUrl))
                 {
                     response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
                     response.AddUrl(locationLog.AudioCommentUrl);
-                    return new OkObjectResult(response);
                 }
+
+                return new OkObjectResult(response);
             }
             finally
             {
                 await locationLogs.ExecuteAsync(TableOperation.InsertOrReplace(settings));
             }
-
-            return new OkObjectResult(response);
         }
 
         private static void AddHistory(MessagingChatSettings settings)
