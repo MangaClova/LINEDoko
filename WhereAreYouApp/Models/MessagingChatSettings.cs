@@ -12,6 +12,7 @@ namespace WhereAreYouApp.Models
         public string YourName { get; set; } = LineMessages.DefaultYourName;
         public string ChatStatus { get; set; } = ChatStatusType.Init;
         public string HistoryJson { get; set; }
+        public bool IsLineFrend { get; set; }
 
         public MessagingChatSettings()
         {

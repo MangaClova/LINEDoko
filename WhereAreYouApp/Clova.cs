@@ -51,7 +51,14 @@ namespace WhereAreYouApp
             var locationLog = taskForLocationLog.Result;
             try
             {
+                if (!settings.IsLineFrend)
+                {
+                    response.AddText(ClovaMessages.GetAddingLineFrendMessage());
+                    return new OkObjectResult(response);
+                }
+
                 AddHistory(settings);
+                response.AddText(ClovaMessages.GetGuideMessage(settings.YourName));
                 if (locationLog == null || !DateTimeOffsetUtils.IsToday(locationLog.Timestamp))
                 {
                     // データが無い
@@ -79,13 +86,13 @@ namespace WhereAreYouApp
                     response.AddText(ClovaMessages.GetVoiceMessagePrefixMessage(settings.YourName));
                     response.AddUrl(locationLog.AudioCommentUrl);
                 }
+
+                return new OkObjectResult(response);
             }
             finally
             {
                 await locationLogs.ExecuteAsync(TableOperation.InsertOrReplace(settings));
             }
-
-            return new OkObjectResult(response);
         }
 
         private static void AddHistory(MessagingChatSettings settings)

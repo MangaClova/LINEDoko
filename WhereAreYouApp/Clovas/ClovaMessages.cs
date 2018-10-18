@@ -9,7 +9,16 @@ namespace WhereAreYouApp.Clovas
     public static class ClovaMessages
     {
         public static string GetLocationMessage(string name, LocationLog locationLog) => 
-            $"こんにちは。{name}は、今、{locationLog.Name ?? locationLog.Address}にいます。";
+            $"{name}は、今、{locationLog.Name ?? locationLog.Address}にいます。";
+        public static string GetAddingLineFrendMessage() =>
+            "このスキルを使用する前に Clova アプリから友達追加をしてください。";
+
+        public static string GetGuideMessage(string name) =>
+            $"私は {name} が LINE で教えてくれた現在地とメッセージを答えます。";
+
+        public static string GetSorryMessage() => "すいません。わかりません。";
+
+        public static string GetGreetMessage() => "こんにちは。";
 
         public static string GetCommentMessage(string name, LocationLog locationLog)
         {
